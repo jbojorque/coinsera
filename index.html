@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coinsera - Master Your Wealth</title>
+    <meta name="description" content="Coinsera is the ultimate finance management app for savings, credits, loans, and physical assets.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            purple: '#6200EE', // Primary color extracted from your screenshots
+                            light: '#BB86FC',
+                            bg: '#F8F9FE',
+                            dark: '#121212',
+                            accent: '#FFAB00' // The orange/yellow from your add buttons
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 3s infinite',
+                        'fade-up': 'fadeUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles for Glossy/Glass effects */
+        body {
+            background-color: #F8F9FE;
+            overflow-x: hidden;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        .phone-frame {
+            border-radius: 40px;
+            border: 8px solid #1a1a1a;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            background: #fff;
+            aspect-ratio: 9/19; /* Approximate mobile aspect ratio */
+            transition: transform 0.3s ease;
+        }
+        
+        .phone-frame:hover {
+            transform: scale(1.02);
+        }
+
+        .phone-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Blob Backgrounds */
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        /* Scroll Animation Observer Class */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease;
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6200EE; 
+            border-radius: 4px;
+        }
+
+        /* Modal Styles */
+        .modal-open {
+            overflow: hidden;
+        }
+        
+        /* Typography for Modal Content */
+        .prose h4 {
+            color: #111;
+            font-weight: 700;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            font-size: 1.125rem;
+        }
+        
+        .prose p {
+            margin-bottom: 1em;
+            line-height: 1.6;
+            color: #374151;
+        }
+        
+        .prose ul {
+            list-style-type: disc;
+            padding-left: 1.5em;
+            margin-bottom: 1em;
+        }
+        
+        .prose li {
+            margin-bottom: 0.5em;
+            color: #374151;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-brand-purple selection:text-white">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-2">
+                    <img src="assets/coinsera-logo.png" alt="Coinsera Logo" class="w-10 h-10 rounded-xl shadow-lg object-cover">
+                    <span class="font-bold text-2xl tracking-tight text-slate-900">Coinsera</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-slate-600 hover:text-brand-purple font-medium transition-colors">Features</a>
+                    <a href="#analytics" class="text-slate-600 hover:text-brand-purple font-medium transition-colors">Analytics</a>
+                    <a href="#gallery" class="text-slate-600 hover:text-brand-purple font-medium transition-colors">Screenshots</a>
+                </div>
+                <button class="bg-brand-purple text-white px-6 py-2.5 rounded-full font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-brand-purple/30 transform hover:-translate-y-0.5 hidden md:block">
+                    Available Soon!
+                </button>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-slate-600 hover:text-brand-purple">
+                        <i data-lucide="menu" class="w-8 h-8"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white/95 backdrop-blur-md absolute w-full border-b border-gray-100">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="#features" class="block px-3 py-3 text-slate-600 font-medium hover:bg-brand-purple/5 rounded-lg">Features</a>
+                <a href="#analytics" class="block px-3 py-3 text-slate-600 font-medium hover:bg-brand-purple/5 rounded-lg">Analytics</a>
+                <a href="#gallery" class="block px-3 py-3 text-slate-600 font-medium hover:bg-brand-purple/5 rounded-lg">Screenshots</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <!-- Background Blobs -->
+        <div class="blob bg-brand-light w-96 h-96 rounded-full top-0 -left-20"></div>
+        <div class="blob bg-brand-accent w-80 h-80 rounded-full bottom-0 right-0 mix-blend-multiply opacity-30"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Text Content -->
+                <div class="max-w-2xl reveal active">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-purple/10 text-brand-purple text-sm font-semibold mb-6">
+                        <span class="w-2 h-2 rounded-full bg-brand-purple animate-pulse"></span>
+                        v1.31.0 Now Available
+                    </div>
+                    <h1 class="text-5xl lg:text-7xl font-bold tracking-tight text-slate-900 leading-tight mb-6">
+                        Smart Finance <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-purple to-purple-400">Simplified.</span>
+                    </h1>
+                    <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+                        Track your savings, manage loans, visualize your spending, and monitor physical assets. Coinsera brings your entire financial life into one clean dashboard.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button class="bg-brand-purple text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-opacity-90 transition-all shadow-xl hover:shadow-brand-purple/30 transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                            <i data-lucide="download"></i> Available Soon!
+                        </button>
+                        <button onclick="openModal('about')" class="bg-white text-slate-700 border border-slate-200 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="info"></i> About App
+                        </button>
+                    </div>
+                    
+                    <!-- <div class="mt-12 flex items-center gap-8 text-slate-500">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-2xl text-slate-900">50K+</span>
+                            <span class="text-sm">Active Users</span>
+                        </div>
+                        <div class="w-px h-10 bg-slate-200"></div>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-2xl text-slate-900">4.8</span>
+                            <span class="text-sm">App Store</span>
+                        </div>
+                    </div> -->
+                </div>
+
+                <!-- Hero Image (3D Layout) -->
+                <div class="relative lg:h-[800px] flex items-center justify-center lg:justify-end reveal active delay-200">
+                    <!-- Main Phone -->
+                    <div class="phone-frame w-64 md:w-80 relative z-20 animate-float">
+                        <!-- Placeholder fallback if image not found -->
+                        <img src="assets/dashboard.png" alt="Coinsera Dashboard" onerror="this.src='https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'">
+                    </div>
+                    
+                    <!-- Floating Card Behind (Credit) -->
+                    <div class="absolute top-20 right-10 lg:right-0 z-10 w-48 md:w-64 animate-float-delayed hidden md:block">
+                        <div class="phone-frame opacity-90 transform rotate-6 scale-90 border-gray-800">
+                            <img src="assets/credit-loan.png" alt="Credit Overview" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'">
+                        </div>
+                    </div>
+
+                    <!-- Decorative elements -->
+                    <div class="absolute top-1/2 left-0 -translate-x-1/2 bg-white p-4 rounded-2xl shadow-xl z-30 animate-bounce hidden lg:block">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                <i data-lucide="trending-up"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500">Net Worth</p>
+                                <p class="font-bold text-slate-900">+ ₱5,000.00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+                <h2 class="text-brand-purple font-semibold tracking-wide uppercase text-sm mb-3">Capabilities</h2>
+                <h3 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6">Total Control Over Your Assets</h3>
+                <p class="text-lg text-slate-600">Stop switching between apps. Coinsera handles your liquid cash, credits, long-term loans, and physical assets in one secure place.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="group p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-brand-purple/30 hover:shadow-2xl hover:shadow-brand-purple/10 transition-all duration-300 reveal">
+                    <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="wallet" class="w-7 h-7"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-3">Smart Wallets</h4>
+                    <p class="text-slate-600 mb-6">Add bank accounts and e-wallets. Track inflows and outflows with precision categories.</p>
+                    <div class="relative h-64 overflow-hidden rounded-xl border border-slate-200">
+                         <img src="assets/add-account.png" class="w-full h-full object-cover object-top hover:object-center transition-all duration-1000" alt="Add Account UI">
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="group p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-brand-purple/30 hover:shadow-2xl hover:shadow-brand-purple/10 transition-all duration-300 reveal delay-100">
+                    <div class="w-14 h-14 bg-brand-purple/10 text-brand-purple rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="landmark" class="w-7 h-7"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-3">Physical Assets</h4>
+                    <p class="text-slate-600 mb-6">Track the value of your real estate, jewelry, or vehicles alongside your liquid cash.</p>
+                    <div class="relative h-64 overflow-hidden rounded-xl border border-slate-200">
+                        <img src="assets/add-physical-assets.png" class="w-full h-full object-cover object-top hover:object-center transition-all duration-1000" alt="Physical Assets UI">
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="group p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-brand-purple/30 hover:shadow-2xl hover:shadow-brand-purple/10 transition-all duration-300 reveal delay-200">
+                    <div class="w-14 h-14 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="credit-card" class="w-7 h-7"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-3">Debt Management</h4>
+                    <p class="text-slate-600 mb-6">Stay on top of credit card limits and loan repayments with clear progress bars.</p>
+                    <div class="relative h-64 overflow-hidden rounded-xl border border-slate-200">
+                        <img src="assets/manage-loan.png" class="w-full h-full object-cover object-top hover:object-center transition-all duration-1000" alt="Loan Management UI">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Analytics Section -->
+    <section id="analytics" class="py-20 bg-slate-900 text-white overflow-hidden relative">
+        <!-- Background decorative grid -->
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#6200EE 1px, transparent 1px); background-size: 30px 30px;"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="order-2 lg:order-1 reveal">
+                    <div class="relative mx-auto w-64 md:w-80">
+                         <!-- Phone Frame with Glow -->
+                         <div class="absolute inset-0 bg-brand-purple blur-3xl opacity-40 rounded-full"></div>
+                         <div class="phone-frame relative z-10 border-slate-700 bg-slate-800">
+                             <img src="assets/reports.png" alt="Heatmap Report">
+                         </div>
+                         
+                         <!-- Secondary floating element -->
+                         <div class="absolute -right-12 bottom-20 z-20 w-40 p-2 glass-card rounded-xl hidden sm:block animate-float">
+                             <img src="assets/reports-heatmap.png" class="rounded-lg shadow-lg border border-slate-200" alt="Graph">
+                         </div>
+                    </div>
+                </div>
+                
+                <div class="order-1 lg:order-2 reveal">
+                    <h2 class="text-brand-purple font-semibold tracking-wide uppercase text-sm mb-3">Deep Insights</h2>
+                    <h3 class="text-3xl md:text-5xl font-bold mb-6">Visualize Your Habits</h3>
+                    <p class="text-slate-300 text-lg mb-8 leading-relaxed">
+                        Numbers can be boring. Coinsera turns your transaction history into beautiful, interactive heatmaps and trend lines.
+                    </p>
+                    
+                    <ul class="space-y-6">
+                        <li class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple mt-1">
+                                <i data-lucide="activity"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-xl">Spending Intensity</h5>
+                                <p class="text-slate-400">Heatmaps show you exactly which days you spend the most.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple mt-1">
+                                <i data-lucide="pie-chart"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-xl">Category Breakdown</h5>
+                                <p class="text-slate-400">See if "Food & Dining" is eating up your savings.</p>
+                            </div>
+                        </li>
+                         <li class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple mt-1">
+                                <i data-lucide="calendar"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-xl">6-Month & Yearly Trends</h5>
+                                <p class="text-slate-400">Compare your net worth growth month over month.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Currency Converter Section -->
+    <section class="py-20 bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <!-- Text Content -->
+                <div class="reveal">
+                    <h2 class="text-brand-purple font-semibold tracking-wide uppercase text-sm mb-3">Global Finance</h2>
+                    <h3 class="text-3xl md:text-5xl font-bold text-slate-900 mb-6">Real-Time Currency Converter</h3>
+                    <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+                        Traveling or managing international assets? Check exchange rates instantly. Coinsera provides up-to-date conversion rates for major global currencies.
+                    </p>
+                    
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-slate-700 font-medium">Real-time exchange rates via API</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-slate-700 font-medium">Support for USD, PHP, EUR, and more</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-slate-700 font-medium">Simple, clean interface</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Image Content -->
+                <div class="reveal delay-100 flex justify-center">
+                    <div class="phone-frame w-64 md:w-72 shadow-2xl border-4 border-slate-100">
+                        <img src="assets/currency-converter.png" alt="Currency Converter Interface" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Infinite Scroll / Gallery -->
+    <section id="gallery" class="py-20 bg-brand-bg overflow-hidden">
+        <div class="text-center mb-12 reveal">
+            <h3 class="text-3xl font-bold text-slate-900">Beautiful Interface</h3>
+            <p class="text-slate-600 mt-2">Designed for clarity and ease of use.</p>
+        </div>
+        
+        <!-- Marquee Effect Container -->
+        <div class="relative w-full">
+            <div class="flex gap-8 px-4 overflow-x-auto pb-10 snap-x snap-mandatory justify-start md:justify-center">
+                
+                <div class="snap-center shrink-0 w-64 md:w-72 phone-frame border-4 border-gray-200 shadow-xl">
+                    <img src="assets/settings.png" alt="Settings Page">
+                </div>
+                <div class="snap-center shrink-0 w-64 md:w-72 phone-frame border-4 border-gray-200 shadow-xl">
+                    <img src="assets/transactions.png" alt="Transactions Page">
+                </div>
+                <div class="snap-center shrink-0 w-64 md:w-72 phone-frame border-4 border-gray-200 shadow-xl">
+                    <img src="assets/dashboard-interactive.png" alt="Interactive Dashboard">
+                </div>
+                <div class="snap-center shrink-0 w-64 md:w-72 phone-frame border-4 border-gray-200 shadow-xl">
+                    <img src="assets/add-account.png" alt="Add Account">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download CTA -->
+    <section class="py-24 bg-white relative overflow-hidden">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="bg-brand-purple rounded-3xl p-8 md:p-16 text-center text-white relative overflow-hidden shadow-2xl hover:scale-[1.01] transition-transform duration-500">
+                <!-- Decorative Circles -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full translate-x-1/2 -translate-y-1/2"></div>
+                <div class="absolute bottom-0 left-0 w-48 h-48 bg-brand-accent opacity-20 rounded-full -translate-x-1/2 translate-y-1/2"></div>
+                
+                <h2 class="text-3xl md:text-5xl font-bold mb-6">Start Your Journey to Financial Freedom</h2>
+                <p class="text-purple-100 text-lg mb-10 max-w-2xl mx-auto">
+                    Get ready to take control of your financial future! Coinsera is launching soon. Download it the moment it's available and finally see where your money really goes.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button class="bg-white text-brand-purple px-8 py-4 rounded-xl font-bold text-lg hover:bg-purple-50 transition-colors flex items-center justify-center gap-3">
+                        <i data-lucide="apple"></i> App Store
+                    </button>
+                    <button class="bg-transparent border-2 border-white/30 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/10 transition-colors flex items-center justify-center gap-3">
+                        <i data-lucide="play-circle"></i> Google Play
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-50 border-t border-slate-200 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-6">
+                        <img src="assets/coinsera-logo.png" alt="Coinsera Logo" class="w-8 h-8 rounded-lg shadow object-cover">
+                        <span class="font-bold text-xl text-slate-900">Coinsera</span>
+                    </div>
+                    <p class="text-slate-500 text-sm">
+                        Made with ❤️ for financial independence.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 mb-4">Product</h4>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li><a href="#features" class="hover:text-brand-purple">Features</a></li>
+                        <li><a href="#" onclick="openModal('howto'); return false;" class="hover:text-brand-purple">How to Use</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 mb-4">Company</h4>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li><button onclick="openModal('about')" class="hover:text-brand-purple text-left">About Us</button></li>
+                        <!-- Careers Removed as requested -->
+                        <li><button onclick="openModal('contact')" class="hover:text-brand-purple text-left">Contact</button></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 mb-4">Legal</h4>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li><button onclick="openModal('privacy')" class="hover:text-brand-purple text-left">Privacy Policy</button></li>
+                        <li><button onclick="openModal('tos')" class="hover:text-brand-purple text-left">Terms of Service</button></li>
+                        <li><button onclick="openModal('licenses')" class="hover:text-brand-purple text-left">Third-Party Licenses</button></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-slate-400 text-sm">© 2025 Coinsera. All rights reserved.</p>
+                <div class="flex gap-4">
+                    <a href="https://www.facebook.com/Coinsera" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-[#1877F2] transition-colors" title="Follow Coinsera on Facebook">
+                        <i data-lucide="facebook" class="w-6 h-6"></i>
+                    </a>
+                    <a href="https://www.reddit.com/r/Coinsera/" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-[#FF4500] transition-colors" title="Join r/Coinsera on Reddit">
+                        <!-- Custom Reddit Icon SVG -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Universal Modal System (Optimized for Performance) -->
+    <!-- Removed backdrop-blur for speed -->
+    <div id="info-modal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop: Removed blur, simple fast fade -->
+        <div class="absolute inset-0 bg-slate-900/60 transition-opacity duration-200 opacity-0 ease-out" id="modal-backdrop" onclick="closeModal()"></div>
+
+        <!-- Modal Panel -->
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all duration-300 sm:my-8 sm:w-full sm:max-w-2xl opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" id="modal-panel">
+                    
+                    <!-- Header -->
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b border-gray-100 flex justify-between items-center sticky top-0 z-20 bg-white">
+                        <h3 class="text-xl font-bold leading-6 text-slate-900 flex items-center gap-2" id="modal-title">
+                            <!-- Icon and Title injected here -->
+                        </h3>
+                        <button onclick="closeModal()" class="rounded-full p-2 bg-slate-100 hover:bg-slate-200 transition-colors">
+                            <i data-lucide="x" class="w-5 h-5 text-slate-500"></i>
+                        </button>
+                    </div>
+
+                    <!-- Content Body -->
+                    <div class="bg-white px-4 pt-5 pb-8 sm:p-6 max-h-[70vh] overflow-y-auto prose prose-slate max-w-none" id="modal-body">
+                        <!-- Content injected here -->
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                        <button type="button" onclick="closeModal()" class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Content Sources (Used to populate the modal) -->
+    <div class="hidden">
+        
+        <!-- Contact Form Content -->
+        <div id="content-contact">
+            <h4 class="mb-4">Drop me a line</h4>
+            <p class="text-sm text-slate-500 mb-6">Have a question or feedback? I'd love to hear from you. Send a message below.</p>
+            
+            <form action="https://formsubmit.co/coinsera.dev@gmail.com" method="POST" class="space-y-4">
+                <!-- Honey Pot (Anti-spam) -->
+                <input type="hidden" name="_captcha" value="false">
+                <!-- Redirect (Optional, defaults to FormSubmit page if removed) -->
+                <!-- <input type="hidden" name="_next" value="YOUR_REDIRECT_URL"> -->
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label for="name" class="text-sm font-medium text-slate-700">Name</label>
+                        <input type="text" name="name" placeholder="Your Name" required 
+                               class="w-full rounded-xl border-gray-200 bg-slate-50 px-4 py-3 text-sm focus:border-brand-purple focus:ring-brand-purple focus:outline-none transition-all">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="email" class="text-sm font-medium text-slate-700">Email</label>
+                        <input type="email" name="email" placeholder="Your Email" required 
+                               class="w-full rounded-xl border-gray-200 bg-slate-50 px-4 py-3 text-sm focus:border-brand-purple focus:ring-brand-purple focus:outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="subject" class="text-sm font-medium text-slate-700">Subject</label>
+                    <input type="text" name="subject" placeholder="What is this regarding?" required 
+                           class="w-full rounded-xl border-gray-200 bg-slate-50 px-4 py-3 text-sm focus:border-brand-purple focus:ring-brand-purple focus:outline-none transition-all">
+                </div>
+
+                <div class="space-y-2">
+                    <label for="message" class="text-sm font-medium text-slate-700">Message</label>
+                    <textarea name="message" rows="5" placeholder="Your Message..." required 
+                              class="w-full rounded-xl border-gray-200 bg-slate-50 px-4 py-3 text-sm focus:border-brand-purple focus:ring-brand-purple focus:outline-none transition-all resize-none"></textarea>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" 
+                            class="w-full bg-brand-purple text-white font-bold py-3 px-6 rounded-xl hover:bg-opacity-90 transition-all shadow-lg shadow-brand-purple/20 flex justify-center items-center gap-2">
+                        <i data-lucide="send" class="w-4 h-4"></i> Shoot Message
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Privacy Policy Content -->
+        <div id="content-privacy">
+            <div class="text-sm text-slate-500 italic mb-6">Last Updated: November 29, 2025</div>
+            
+            <h4>1. Overview</h4>
+            <p>Coinsera (“the App”) is a finance tracker designed to help users manage their personal savings, income, and expenses. Your privacy is extremely important to us.</p>
+            
+            <h4>2. No Data Collection</h4>
+            <p>Coinsera does not collect, store, or transmit any personal or financial information to our own external servers. All data you enter into the app is saved locally on your device only.</p>
+            
+            <h4>3. Smart Features & Internet Usage</h4>
+            <p>The app works primarily offline. However, three optional features require internet access to function:</p>
+            <ul>
+                <li><strong>Receipt Scanning:</strong> Images captured are sent securely to OCR.space for text recognition.</li>
+                <li><strong>Voice Input:</strong> Audio recorded is sent securely to Groq/OpenAI for transcription.</li>
+                <li><strong>Currency Rates:</strong> Requests are sent to ExchangeRate-API (open.er-api.com) to fetch current rates. No personal data is transmitted.</li>
+            </ul>
+            <p>These files/requests are processed instantly and are not stored permanently by Coinsera.</p>
+            
+            <h4>4. Data Storage</h4>
+            <p>All user data — including accounts, transactions, and preferences — are stored locally on your device’s storage. If you uninstall the app or clear its data, all stored information will be permanently deleted.</p>
+            
+            <h4>5. Permissions</h4>
+            <p>Coinsera may request permissions for:</p>
+            <ul>
+                <li><strong>Storage:</strong> For exporting CSV files.</li>
+                <li><strong>Camera:</strong> For scanning receipts.</li>
+                <li><strong>Microphone:</strong> For voice commands.</li>
+            </ul>
+            
+            <h4>6. Security</h4>
+            <p>Because all information is stored locally on your device, protecting your device with a passcode or encryption is recommended to ensure your financial data remains private.</p>
+            
+            <h4>7. Contact</h4>
+            <p>If you have any questions, please contact:</p>
+            <ul>
+                <li>Developer: JLB</li>
+                <li>Email: <a href="mailto:coinsera.dev@gmail.com" class="text-brand-purple hover:underline">coinsera.dev@gmail.com</a></li>
+            </ul>
+        </div>
+
+        <!-- Terms of Service Content -->
+        <div id="content-tos">
+            <div class="text-sm text-slate-500 italic mb-6">Last Updated: November 29, 2025</div>
+            
+            <p>Welcome to Coinsera — a personal finance tracker designed to help you manage your savings, expenses, and financial goals. By downloading or using Coinsera (“the App”), you agree to these Terms of Service (“Terms”).</p>
+            
+            <h4>1. Acceptance of Terms</h4>
+            <p>By installing or using Coinsera, you acknowledge that you have read, understood, and agree to be bound by these Terms. If you do not agree, please do not use the App.</p>
+            
+            <h4>2. Description of the Service</h4>
+            <p>Coinsera is a personal finance management tool that helps you track savings, accounts, credit card balances, and monitor financial goals. The App operates primarily offline but offers optional AI and Data features that require internet connectivity.</p>
+            
+            <h4>3. Data Storage and Privacy</h4>
+            <ul>
+                <li>The App does not store your financial data on external servers.</li>
+                <li>You are solely responsible for managing and backing up your data.</li>
+                <li>All financial data you enter into Coinsera is stored locally on your device.</li>
+            </ul>
+            
+            <h4>4. No Account Required</h4>
+            <p>Coinsera does not require user registration or login. You can use all features without creating an account.</p>
+            
+            <h4>5. Intellectual Property</h4>
+            <p>All elements of the Coinsera App — including its logo, interface design, and code — are owned by the developer. You may not copy, modify, or distribute any part of the App without prior written permission.</p>
+            
+            <h4>6. Contact</h4>
+            <p>If you have questions about these Terms, you can reach us at <a href="mailto:coinsera.dev@gmail.com" class="text-brand-purple hover:underline">coinsera.dev@gmail.com</a> or via subreddit r/Coinsera.</p>
+        </div>
+
+        <!-- How To Content -->
+        <div id="content-howto">
+             <h4>1. Dashboard & Net Worth</h4>
+             <p>The Dashboard gives you a snapshot of your financial health. By default, it shows your Total Savings. You can toggle "Include Credit" or "Include Assets" in Settings to see a comprehensive Net Worth calculation.</p>
+             <ul>
+                 <li>Tap legend items on the Pie Chart to filter the view.</li>
+                 <li>Tap the "Net Worth" card text to see details.</li>
+             </ul>
+
+             <h4>2. Reports & Trends</h4>
+             <p>Navigate to the "Reports" tab to visualize your spending and income over time.</p>
+             <ul>
+                 <li><strong>Trends:</strong> Switch between 6-Month and 1-Year views to see your financial trajectory.</li>
+                 <li><strong>History:</strong> Use the arrow buttons to change the selected month. The list below shows every transaction for that period.</li>
+             </ul>
+
+             <h4>3. Spending Heatmap</h4>
+             <p>The Heatmap (found in the Reports tab) visualizes your spending intensity for the month.</p>
+             <ul>
+                 <li><strong>Relative Intensity:</strong> The app finds your highest spending day of the month and sets that as "100%" (Deep Red). All other days are colored relative to that benchmark.</li>
+                 <li><strong>Green (Zero):</strong> No money left your accounts that day.</li>
+                 <li><strong>Red (High):</strong> You spent a significant amount compared to your usual habits.</li>
+             </ul>
+
+             <h4>4. Accounts & Savings</h4>
+             <p>Track your liquid assets here. You can add bank accounts or e-wallets (GCash, Maya).</p>
+             <ul>
+                 <li><strong>Interest:</strong> Set an interest rate (e.g., 4% p.a.) and a cycle (Monthly/Daily). Coinsera automatically calculates gains and deducts the 20% withholding tax.</li>
+             </ul>
+
+             <h4>5. Settings & Data</h4>
+             <p>Manage your app preferences and personal data.</p>
+             <ul>
+                 <li><strong>Profile:</strong> Tap the pencil icon next to your username to edit it. Tap the checkmark to save.</li>
+                 <li><strong>Export:</strong> Tap "Export All Transactions" to generate a CSV file of your entire financial history for use in Excel or Google Sheets.</li>
+             </ul>
+
+             <h4>6. Physical Assets</h4>
+             <p>Track items that have value but aren't cash, such as Real Estate, Vehicles, or Gold. These contribute to your Net Worth.</p>
+             <ul>
+                 <li>Updates to asset details (like Name/Notes) are logged as system events.</li>
+                 <li>Updates to the asset's <strong>Value</strong> are logged as financial corrections.</li>
+             </ul>
+
+             <h4>7. Credit & Loans</h4>
+             <p>Manage your liabilities in the "Credit & Loan" tab.</p>
+             <ul>
+                 <li><strong>Credit Cards:</strong> Track your used balance vs. credit limit. Set a Monthly Interest Rate (MIR) to auto-calculate charges.</li>
+                 <li><strong>Loans:</strong> Track installment payments. The loan closes automatically when fully paid.</li>
+             </ul>
+
+             <h4>8. Smart Transactions</h4>
+             <p>Use AI to speed up your tracking:</p>
+             <ul>
+                 <li><strong>Scan Receipt:</strong> Tap the Camera icon to capture a receipt. The app uses OCR to find the total amount.</li>
+                 <li><strong>Voice Input:</strong> Tap the Mic icon and say something like "Spent 500 on Food". The app will fill in the details for you.</li>
+             </ul>
+             <p class="text-sm italic">* These features require an active internet connection.</p>
+             
+             <h4>9. Currency Converter</h4>
+             <p>Quickly check international exchange rates against the Philippine Peso (PHP) or other currencies.</p>
+             
+             <h4>10. Contact Support</h4>
+             <p>Need help or found a bug? You can reach our support team at <a href="mailto:coinsera.dev@gmail.com" class="text-brand-purple hover:underline">coinsera.dev@gmail.com</a>.</p>
+        </div>
+        
+        <!-- Licenses Content -->
+        <div id="content-licenses">
+            <p class="mb-4">Coinsera uses the following third-party libraries:</p>
+            <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 font-mono text-xs text-slate-600 overflow-x-auto">
+                <ul class="space-y-1">
+                     <li>@react-native-async-storage/async-storage@2.2.0</li>
+                     <li>@react-native-picker/picker@2.11.1</li>
+                     <li>@react-navigation/bottom-tabs@7.8.2</li>
+                     <li>@react-navigation/native@7.1.19</li>
+                     <li>@react-navigation/stack@7.6.2</li>
+                     <li>expo-file-system@19.0.17</li>
+                     <li>expo-sharing@14.0.7</li>
+                     <li>expo-status-bar@3.0.8</li>
+                     <li>expo@54.0.22</li>
+                     <li>react-native-chart-kit@6.12.0</li>
+                     <li>react-native-dropdown-picker@5.4.6</li>
+                     <li>react-native-gesture-handler@2.28.0</li>
+                     <li>react-native-safe-area-context@5.6.2</li>
+                     <li>react-native-screens@4.16.0</li>
+                     <li>react-native-svg@15.12.1</li>
+                     <li>react-native@0.81.5</li>
+                     <li>react@19.1.0</li>
+                     <li>expo-image-picker@~16.0.3</li>
+                     <li>expo-av@~15.0.1</li>
+                     <li>expo-clipboard@~7.0.0</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- About Content -->
+        <div id="content-about">
+            <div class="flex flex-col items-center justify-center mb-8 bg-slate-50 p-6 rounded-2xl">
+                <img src="assets/coinsera-logo.png" class="w-20 h-20 rounded-2xl shadow-lg mb-4" alt="Logo">
+                <h4 class="text-2xl font-bold m-0 p-0 text-slate-900">Coinsera</h4>
+                <p class="text-slate-500 m-0">Version 1.31.0</p>
+            </div>
+            
+            <p>Coinsera is a simple and intuitive personal finance app designed to help you keep track of your savings and debts.</p>
+            <ul>
+                <li>Organize and view savings and debts in one place</li>
+                <li>Get a visual overview of your account balances</li>
+                <li>AI-Powered Receipt Scanning & Voice Input</li>
+                <li>Real-time Currency Converter tool</li>
+            </ul>
+            
+            <p>Coinsera is built for everyday users who want a hassle-free way to monitor their money.</p>
+            
+            <p class="mt-4">
+                <strong>Join our Community:</strong><br>
+                <a href="https://www.reddit.com/r/Coinsera/" target="_blank" class="text-brand-purple hover:underline font-bold inline-flex items-center gap-1">
+                   r/Coinsera on Reddit <i data-lucide="external-link" class="w-4 h-4"></i>
+                </a>
+            </p>
+            
+            <h4>Credits</h4>
+            <ul>
+                <li><strong>Developed by:</strong> JLB</li>
+                <li><strong>Dedicated to:</strong> AFD</li>
+            </ul>
+            
+            <div class="mt-8 pt-8 border-t border-gray-100 text-center text-sm text-slate-400">
+                © 2025 Coinsera App. All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-white/90', 'backdrop-blur-md', 'shadow-sm');
+                navbar.classList.remove('py-4');
+            } else {
+                navbar.classList.remove('bg-white/90', 'backdrop-blur-md', 'shadow-sm');
+                navbar.classList.add('py-4');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Scroll Reveal Animation
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        
+        window.addEventListener("scroll", reveal);
+        reveal();
+
+        // --- Optimized Modal Logic ---
+        const modal = document.getElementById('info-modal');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const modalPanel = document.getElementById('modal-panel');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+
+        function openModal(type) {
+            let title = '';
+            let contentId = '';
+            let icon = '';
+
+            switch(type) {
+                case 'privacy':
+                    title = 'Privacy Policy';
+                    contentId = 'content-privacy';
+                    icon = 'shield-check';
+                    break;
+                case 'tos':
+                    title = 'Terms of Service';
+                    contentId = 'content-tos';
+                    icon = 'file-text';
+                    break;
+                case 'about':
+                    title = 'About Coinsera';
+                    contentId = 'content-about';
+                    icon = 'info';
+                    break;
+                case 'howto':
+                    title = 'How to Use Coinsera';
+                    contentId = 'content-howto';
+                    icon = 'help-circle';
+                    break;
+                case 'licenses':
+                    title = 'Third-Party Licenses';
+                    contentId = 'content-licenses';
+                    icon = 'code-2';
+                    break;
+                case 'contact':
+                    title = 'Contact Support';
+                    contentId = 'content-contact';
+                    icon = 'mail';
+                    break;
+            }
+
+            // Populate Modal
+            const iconHtml = `<i data-lucide="${icon}" class="w-6 h-6 text-brand-purple"></i>`;
+            modalTitle.innerHTML = `${iconHtml} ${title}`;
+            modalBody.innerHTML = document.getElementById(contentId).innerHTML;
+            lucide.createIcons(); // Re-init icons for the new content
+
+            // Show Modal
+            modal.classList.remove('hidden');
+            // Small delay to allow display:block to apply before opacity transition
+            setTimeout(() => {
+                modalBackdrop.classList.remove('opacity-0');
+                modalPanel.classList.remove('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+                modalPanel.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+            }, 10);
+            
+            document.body.classList.add('modal-open');
+        }
+
+        function closeModal() {
+            modalBackdrop.classList.add('opacity-0');
+            modalPanel.classList.add('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+            modalPanel.classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+            }, 200); // Faster close transition
+        }
+    </script>
+</body>
+</html>
